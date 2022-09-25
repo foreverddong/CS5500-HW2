@@ -1,3 +1,4 @@
+import { TemperatureAccess } from 'Commands'
 import * as fs from 'fs/promises'
 import fetch from 'node-fetch'
 
@@ -42,5 +43,10 @@ export class SessionManager {
         let responseJson = (await response.json()) as any;
         this.AccessToken = `${responseJson.token_type} ${responseJson.access_token}`;
         this.RefreshToken = responseJson.refresh_token;
+    }
+
+    public async ExecuteCommand(command : TemperatureAccess) 
+    {
+        
     }
 }
