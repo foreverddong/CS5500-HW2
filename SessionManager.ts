@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 import fetch from 'node-fetch'
 
 export class SessionManager {
-    //BREAKS OOP PRINCIPLE 3 - KEEP THINGS PRIVATE 
+
     public ProjectID : string
     public ClientID : string
     public ClientSecret : string

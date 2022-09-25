@@ -17,7 +17,7 @@ export class DeviceManager {
     }
 
     public async ThermostatName() : Promise<string> {
-        //BREAKS PRINCIPLE 3 - REPEATING
+
         let response = await fetch(`${this.baseUrl}enterprises/${this.session.ProjectID}/devices`,
         {
             headers : this.headers
@@ -28,7 +28,7 @@ export class DeviceManager {
     }
 
     public async CurrentTemperature() : Promise<number> {
-        //BREAKS PRINCIPLE 3 - REPEATING
+
         let response = await fetch (`${this.baseUrl}${await this.ThermostatName()}`,
         {
             headers : this.headers
@@ -39,7 +39,7 @@ export class DeviceManager {
     }
 
     public async SetTemperature(temp : number) {
-        //BREAKS PRINCIPLE 3 - REPEATING
+
         let response = await fetch (`${this.baseUrl}${await this.ThermostatName()}:executeCommand`, 
         {
             headers: this.headers,
