@@ -1,3 +1,4 @@
+//BREAKS OOP PRINCIPLE 5 - INTERFACES OVER SUBCLASSING
 export abstract class CommandBase {
     static ParseCommand(input : string) : CommandBase {
         const segs = input.split(" ");
