@@ -1,6 +1,7 @@
 import { SessionManager } from "./SessionManager.js" 
 import * as readline from "readline-sync"
 import { DeviceManager } from "./DeviceManager.js";
+import { CommandBase } from "./Commands.js";
 
 console.log("Nest Thermostat Controller");
 
@@ -12,9 +13,14 @@ console.log(`Auth URL: ${s.AuthURL} \n`);
 let auth = readline.question("Authorize with google account and paste redirected URL here...\n");
 //Example redirected URL:
 //auth = "https://www.google.com/?code=4/0ARtbsJqknUXn0693wvuU-DKfsNwQqO2DVOl93w1oAWPsxR_ytDrMpPLAE6fX-RA1Ri-X6Q&scope=https://www.googleapis.com/auth/sdm.service";
+if (auth != "")
+{
+    let authcode = auth.match(new RegExp("(.*)(code=)(.*)(&scope=)(.*)"))[3];
+    await s.ObtainToken(authcode);
+} else {
+    await s.Refresh();
+}
 
-let authcode = auth.match(new RegExp("(.*)(code=)(.*)(&scope=)(.*)"))[3];
-await s.ObtainToken(authcode);
 console.log("Found Auth code, getting tokens...");
 console.log(`Access Token: ${s.AccessToken}\nRefresh Token: ${s.RefreshToken}`);
 
@@ -24,7 +30,9 @@ console.log(await manager.ThermostatName());
 while (true) {
     console.log("Enter a Command, or HELP:");
     let cmd = readline.question();
-    switch (cmd) {
-        case "HELP":
+    if (cmd == "EXIT") {
+        break;
     }
+    let command = CommandBase.ParseCommand(cmd);
+    console.log(await manager.Execute(command));
 }

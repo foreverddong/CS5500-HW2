@@ -22,6 +22,10 @@ export class SessionManager {
         this.ClientID = secretJson.client_id;
         this.ClientSecret = secretJson.client_secret;
         this.RedirectURL = secretJson.redirect_url;
+        if (secretJson.refresh_token != '')
+        {
+            this.RefreshToken = secretJson.refresh_token;
+        }
     }
 
     public get AuthURL() : string {
@@ -45,8 +49,18 @@ export class SessionManager {
         this.RefreshToken = responseJson.refresh_token;
     }
 
-    public async ExecuteCommand(command : TemperatureAccess) 
+    public async Refresh()
     {
-        
+        let params = {
+            "client_id": this.ClientID,
+            "client_secret" : this.ClientSecret,
+            "grant_type" : "refresh_token",
+            "refresh_token" : this.RefreshToken
+        };
+        let response = await fetch(decodeURIComponent("https://www.googleapis.com/oauth2/v4/token?" + new URLSearchParams(params)), {
+            method : "POST",
+        });
+        let responseJson = (await response.json()) as any;
+        this.AccessToken = `${responseJson.token_type} ${responseJson.access_token}`;
     }
 }

@@ -1,9 +1,10 @@
-import { SessionManager } from "SessionManager"
+import { SessionManager } from "./SessionManager.js"
 import fetch from 'node-fetch'
+import { CommandBase, TemperatureAccess, TemperatureSet } from "./Commands.js";
 
 export class DeviceManager {
     private session : SessionManager
-    private baseUrl = "https://smartdevicemanagement.googleapis.com/v1/enterprises/"
+    private baseUrl = "https://smartdevicemanagement.googleapis.com/v1/"
     private get headers() {
         return {
             "Content-Type" : "application/json",
@@ -16,7 +17,7 @@ export class DeviceManager {
     }
 
     public async ThermostatName() : Promise<string> {
-        let response = await fetch(`${this.baseUrl}${this.session.ProjectID}/devices`,
+        let response = await fetch(`${this.baseUrl}enterprises/${this.session.ProjectID}/devices`,
         {
             headers : this.headers
         });
@@ -33,5 +34,30 @@ export class DeviceManager {
         let responseJson = (await response.json()) as any;
         let temp : number  = responseJson["traits"]["sdm.devices.traits.Temperature"]["ambientTemperatureCelsius"];
         return temp;
+    }
+
+    public async SetTemperature(temp : number) {
+        let response = await fetch (`${this.baseUrl}${await this.ThermostatName()}:executeCommand`, 
+        {
+            headers: this.headers,
+            body: JSON.stringify({
+                "command" : "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+                "params" : {
+                    "coolCelsius" : temp
+                }
+            }),
+            method : "POST"
+        });
+        let responsetext = await response.text();
+    }
+
+    public async Execute(cmd : CommandBase) : Promise<string> {
+        if (cmd instanceof TemperatureAccess)
+        {
+            return (await this.CurrentTemperature()).toString();
+        } else if (cmd instanceof TemperatureSet)
+        {
+            await this.SetTemperature(cmd.targetTemp);
+        }
     }
 }
