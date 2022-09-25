@@ -21,3 +21,10 @@ console.log(`Access Token: ${s.AccessToken}\nRefresh Token: ${s.RefreshToken}`);
 let manager = new DeviceManager(s);
 console.log(await manager.ThermostatName());
 
+while (true) {
+    console.log("Enter a Command, or HELP:");
+    let cmd = readline.question();
+    switch (cmd) {
+        case "HELP":
+    }
+}

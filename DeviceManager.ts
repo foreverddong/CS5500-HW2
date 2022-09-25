@@ -25,7 +25,13 @@ export class DeviceManager {
         return deviceName;
     }
 
-    // public async CurrentTemperature() : Promise<number> {
-        
-    // }
+    public async CurrentTemperature() : Promise<number> {
+        let response = await fetch (`${this.baseUrl}${await this.ThermostatName()}`,
+        {
+            headers : this.headers
+        });
+        let responseJson = (await response.json()) as any;
+        let temp : number  = responseJson["traits"]["sdm.devices.traits.Temperature"]["ambientTemperatureCelsius"];
+        return temp;
+    }
 }
